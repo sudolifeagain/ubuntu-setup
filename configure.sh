@@ -29,6 +29,27 @@ sudo apt update && sudo apt upgrade -y
 sudo apt autoremove -y
 print_success "システムアップデートが完了しました"
 
+# ラップトップ蓋閉じ時の動作設定
+print_info "ラップトップ蓋閉じ時の動作設定を適用中..."
+logind_conf="/etc/systemd/logind.conf"
+
+# バックアップを作成
+if [ ! -f "${logind_conf}.backup" ]; then
+    sudo cp "$logind_conf" "${logind_conf}.backup"
+    print_info "logind.confのバックアップを作成しました"
+fi
+
+# 設定を変更
+sudo sed -i 's/^#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPower=ignore/' "$logind_conf"
+sudo sed -i 's/^#HandleLidSwitchDocked=ignore/HandleLidSwitchDocked=ignore/' "$logind_conf"
+
+# 設定が正しく適用されたか確認
+if grep -q "^HandleLidSwitchExternalPower=ignore" "$logind_conf" && grep -q "^HandleLidSwitchDocked=ignore" "$logind_conf"; then
+    print_success "蓋閉じ時の動作設定が適用されました"
+else
+    print_warning "設定の適用に失敗した可能性があります。手動で確認してください。"
+fi
+
 # Mozc設定ファイルの作成
 print_info "Mozc設定ファイルを作成中..."
 mkdir -p ~/.config/mozc
@@ -162,4 +183,16 @@ if [ -f "${ssh_key_path}.pub" ]; then
 fi
 
 print_success "🎉 設定ファイルの適用が完了しました！"
-print_info "変更を完全に適用するには再起動またはログアウト/ログインを行ってください"
+print_info "蓋閉じ時の動作設定を含め、全ての変更を完全に適用するには再起動が必要です"
+
+# ユーザーに再起動の確認
+print_info "今すぐシステムを再起動しますか？ (y/n)"
+read -r reboot_response
+
+if [[ "$reboot_response" =~ ^[Yy]$ ]]; then
+    print_info "システムを再起動中..."
+    sudo reboot
+else
+    print_warning "再起動をスキップしました"
+    print_info "設定を完全に適用するには、後で手動で再起動してください: sudo reboot"
+fi
