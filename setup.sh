@@ -107,12 +107,7 @@ print_success "Obsidianのインストール完了"
 
 # Spotifyのインストール
 print_info "Spotifyをインストール中..."
-curl -sS https://download.spotify.com/debian/pubkey_0D811D58.gpg | gpg --dearmor > spotify.gpg
-sudo install -o root -g root -m 644 spotify.gpg /etc/apt/trusted.gpg.d/
-echo "deb http://repository.spotify.com stable non-free" | sudo tee /etc/apt/sources.list.d/spotify.list
-sudo apt update
-sudo apt install -y spotify-client
-rm -f spotify.gpg
+sudo snap install spotify
 
 print_success "Spotifyのインストール完了"
 
