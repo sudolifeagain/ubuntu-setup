@@ -62,6 +62,14 @@ if ! grep -q "alias c=" ~/.zshrc; then
     echo 'alias c="clear"' >> ~/.zshrc
 fi
 
+if ! grep -q "alias cc=" ~/.zshrc; then
+    echo 'alias cc="cc -Wall -Wextra -Werror"' >> ~/.zshrc
+fi
+
+if ! grep -q "alias norm=" ~/.zshrc; then
+    echo 'alias norm="norminette -R CheckForbiddenSourceHeader"' >> ~/.zshrc
+fi
+
 print_success "Zshエイリアスが設定されました"
 
 # デフォルトシェルの変更確認
