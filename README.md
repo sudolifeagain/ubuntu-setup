@@ -5,15 +5,28 @@ Ubuntu開発環境の自動インストール・設定スクリプト
 ## 📦 インストール内容
 
 ### 開発ツール
-- **基本**: git, build-essential, gdb, valgrind, ffmpeg
-- **エディタ**: VSCode + C/C++拡張
+- **基本**: git, curl, wget, build-essential, gdb, valgrind, ffmpeg
+- **Python**: python3, pip3, pipx, norminette
+- **Node.js**: nvm + 最新LTS版
+- **エディタ**: VSCode + C/C++拡張機能
 - **シェル**: Zsh + エイリアス設定
+
+### VSCode拡張機能
+- C/C++ Tools (ms-vscode.cpptools)
+- C/C++ Extension Pack
+- 42 Header (kube.42header)
+- 42 Line Counter (DoKca.42-ft-count-line)
+- Norminette for 42 (MariusvanWijk-JoppeKoers.codam-norminette-3)
+- Code Spell Checker
+- Error Lens
+- Path Intellisense
 
 ### アプリケーション
 - **ブラウザ**: Brave Browser
 - **メディア**: VLC, OBS Studio, Spotify
 - **ドキュメント**: Typora, Obsidian
-- **ユーティリティ**: CopyQ
+- **コミュニケーション**: Discord
+- **ユーティリティ**: CopyQ, fastfetch, Bitwarden
 - **日本語入力**: ibus-mozc
 
 ## 🚀 使用方法
