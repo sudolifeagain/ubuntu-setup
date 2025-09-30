@@ -73,6 +73,28 @@ else
     print_success "norminetteのインストール完了"
 fi
 
+# Node.js（nvm経由）のインストール
+if command -v node &> /dev/null; then
+    print_success "Node.jsは既にインストールされています ($(node -v))"
+else
+    print_info "Node.js（nvm経由）をインストール中..."
+    # nvmをダウンロードしてインストール
+    curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
+    
+    # nvmをロード
+    export NVM_DIR="$HOME/.nvm"
+    [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+    [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
+    
+    # 最新のLTSバージョンをインストール
+    nvm install --lts
+    nvm use --lts
+    nvm alias default lts/*
+    
+    print_success "Node.jsのインストール完了 ($(node -v))"
+    print_success "npmのインストール完了 ($(npm -v))"
+fi
+
 # Microsoft公式リポジトリの追加とVSCodeインストール
 if command -v code &> /dev/null; then
     print_success "VSCodeは既にインストールされています"
