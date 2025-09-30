@@ -38,7 +38,9 @@ sudo apt install -y \
     git \
     zsh \
     ffmpeg \
-    copyq
+    copyq \
+    python3 \
+    python3-pip
 
 print_success "基本ツールのインストール完了"
 
