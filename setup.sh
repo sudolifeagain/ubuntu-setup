@@ -26,30 +26,52 @@ sudo apt update && sudo apt upgrade -y
 
 # 基本ツールのインストール
 print_info "基本ツールをインストール中..."
-sudo apt install -y \
-    curl \
-    wget \
-    gnupg \
-    gpg \
-    software-properties-common \
-    build-essential \
-    gdb \
-    valgrind \
-    git \
-    zsh \
-    ffmpeg \
-    copyq \
-    python3 \
-    python3-pip \
-    python3-setuptools \
-    pipx
 
-print_success "基本ツールのインストール完了"
+# 個別に重要なツールをチェック
+tools_to_check=("git" "zsh" "ffmpeg" "copyq")
+missing_tools=()
+
+for tool in "${tools_to_check[@]}"; do
+    if ! command -v "$tool" &> /dev/null; then
+        missing_tools+=("$tool")
+    else
+        print_success "$tool は既にインストールされています"
+    fi
+done
+
+if [ ${#missing_tools[@]} -gt 0 ]; then
+    print_info "不足している基本ツールをインストール中..."
+    sudo apt install -y \
+        curl \
+        wget \
+        gnupg \
+        gpg \
+        software-properties-common \
+        build-essential \
+        gdb \
+        valgrind \
+        git \
+        zsh \
+        ffmpeg \
+        copyq \
+        python3 \
+        python3-pip \
+        python3-setuptools \
+        pipx
+    print_success "基本ツールのインストール完了"
+else
+    print_success "基本ツールは全てインストール済みです"
+fi
 
 # Python関連
-print_info "Python関連ツールをインストール中..."
-pipx install norminette
-pipx ensurepath
+if command -v norminette &> /dev/null; then
+    print_success "norminetteは既にインストールされています"
+else
+    print_info "Python関連ツールをインストール中..."
+    pipx install norminette
+    pipx ensurepath
+    print_success "norminetteのインストール完了"
+fi
 
 # Microsoft公式リポジトリの追加とVSCodeインストール
 if command -v code &> /dev/null; then
@@ -85,12 +107,26 @@ fi
 
 # メディア関連アプリケーション
 print_info "メディア関連アプリケーションをインストール中..."
-sudo apt install -y vlc
+
+# VLCのインストール
+if command -v vlc &> /dev/null; then
+    print_success "VLCは既にインストールされています"
+else
+    print_info "VLCをインストール中..."
+    sudo apt install -y vlc
+    print_success "VLCのインストール完了"
+fi
 
 # OBS Studio（公式PPA使用）
-sudo add-apt-repository -y ppa:obsproject/obs-studio
-sudo apt update
-sudo apt install -y obs-studio
+if command -v obs &> /dev/null; then
+    print_success "OBS Studioは既にインストールされています"
+else
+    print_info "OBS Studioをインストール中..."
+    sudo add-apt-repository -y ppa:obsproject/obs-studio
+    sudo apt update
+    sudo apt install -y obs-studio
+    print_success "OBS Studioのインストール完了"
+fi
 
 print_success "メディア関連アプリケーションのインストール完了"
 
@@ -129,7 +165,12 @@ else
 fi
 
 # 日本語入力システム（Mozc）のインストール
-print_info "日本語入力システム（Mozc）をインストール中..."
-sudo apt install -y ibus-mozc
+if dpkg -l | grep -q ibus-mozc; then
+    print_success "ibus-mozcは既にインストールされています"
+else
+    print_info "日本語入力システム（Mozc）をインストール中..."
+    sudo apt install -y ibus-mozc
+    print_success "ibus-mozcのインストール完了"
+fi
 
 print_success "🎉 Ubuntu自動セットアップが完了しました！"
