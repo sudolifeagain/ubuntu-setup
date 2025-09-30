@@ -52,13 +52,18 @@ pipx install norminette
 pipx ensurepath
 
 # Microsoft公式リポジトリの追加とVSCodeインストール
-print_info "VSCodeをインストール中..."
-wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
-sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
-sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
-sudo apt update
-sudo apt install -y code
-rm -f microsoft.gpg
+if command -v code &> /dev/null; then
+    print_success "VSCodeは既にインストールされています"
+else
+    print_info "VSCodeをインストール中..."
+    wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
+    sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
+    sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
+    sudo apt update
+    sudo apt install -y code
+    rm -f microsoft.gpg
+    print_success "VSCodeのインストール完了"
+fi
 
 # VSCode拡張機能のインストール
 print_info "VSCode拡張機能をインストール中..."
@@ -67,13 +72,16 @@ code --install-extension ms-vscode.cpptools
 print_success "VSCode関連のセットアップ完了"
 
 # Braveブラウザのインストール
-print_info "Braveブラウザをインストール中..."
-sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
-echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
-sudo apt update
-sudo apt install -y brave-browser
-
-print_success "Braveブラウザのインストール完了"
+if command -v brave-browser &> /dev/null; then
+    print_success "Braveブラウザは既にインストールされています"
+else
+    print_info "Braveブラウザをインストール中..."
+    sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
+    echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
+    sudo apt update
+    sudo apt install -y brave-browser
+    print_success "Braveブラウザのインストール完了"
+fi
 
 # メディア関連アプリケーション
 print_info "メディア関連アプリケーションをインストール中..."
@@ -87,29 +95,38 @@ sudo apt install -y obs-studio
 print_success "メディア関連アプリケーションのインストール完了"
 
 # Typoraのインストール
-print_info "Typoraをインストール中..."
-wget -qO - https://typora.io/linux/public-key.asc | sudo gpg --dearmor -o /usr/share/keyrings/typora.gpg
-echo "deb [signed-by=/usr/share/keyrings/typora.gpg] https://typora.io/linux ./" | sudo tee /etc/apt/sources.list.d/typora.list
-sudo apt update
-sudo apt install -y typora
-
-print_success "Typoraのインストール完了"
+if command -v typora &> /dev/null; then
+    print_success "Typoraは既にインストールされています"
+else
+    print_info "Typoraをインストール中..."
+    wget -qO - https://typora.io/linux/public-key.asc | sudo gpg --dearmor -o /usr/share/keyrings/typora.gpg
+    echo "deb [signed-by=/usr/share/keyrings/typora.gpg] https://typora.io/linux ./" | sudo tee /etc/apt/sources.list.d/typora.list
+    sudo apt update
+    sudo apt install -y typora
+    print_success "Typoraのインストール完了"
+fi
 
 # Obsidianのインストール
-print_info "Obsidianをインストール中..."
-OBSIDIAN_DEB="obsidian_latest_amd64.deb"
-wget -O "$OBSIDIAN_DEB" "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.12/obsidian_1.9.12_amd64.deb"
-sudo dpkg -i "$OBSIDIAN_DEB"
-sudo apt-get install -f -y  # 依存関係の修正
-rm -f "$OBSIDIAN_DEB"
-
-print_success "Obsidianのインストール完了"
+if command -v obsidian &> /dev/null; then
+    print_success "Obsidianは既にインストールされています"
+else
+    print_info "Obsidianをインストール中..."
+    OBSIDIAN_DEB="obsidian_latest_amd64.deb"
+    wget -O "$OBSIDIAN_DEB" "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.12/obsidian_1.9.12_amd64.deb"
+    sudo dpkg -i "$OBSIDIAN_DEB"
+    sudo apt-get install -f -y  # 依存関係の修正
+    rm -f "$OBSIDIAN_DEB"
+    print_success "Obsidianのインストール完了"
+fi
 
 # Spotifyのインストール
-print_info "Spotifyをインストール中..."
-sudo snap install spotify
-
-print_success "Spotifyのインストール完了"
+if snap list spotify &> /dev/null; then
+    print_success "Spotifyは既にインストールされています"
+else
+    print_info "Spotifyをインストール中..."
+    sudo snap install spotify
+    print_success "Spotifyのインストール完了"
+fi
 
 # 日本語入力システム（Mozc）のインストール
 print_info "日本語入力システム（Mozc）をインストール中..."
