@@ -122,6 +122,7 @@ extensions=(
     "usernamehw.errorlens"
     "christian-kohler.path-intellisense"
     "MariusvanWijk-JoppeKoers.codam-norminette-3"
+    "tomoki1207.pdf"
 )
 
 # 各拡張機能をインストール
