@@ -89,7 +89,29 @@ fi
 
 # VSCode拡張機能のインストール
 print_info "VSCode拡張機能をインストール中..."
-code --install-extension ms-vscode.cpptools
+
+# 拡張機能のリスト
+extensions=(
+    "ms-vscode.cpptools"
+    "DoKca.42-ft-count-line"
+    "kube.42header"
+    "ms-vscode.cpptools-extension-pack"
+    "streetsidesoftware.code-spell-checker"
+    "usernamehw.errorlens"
+    "christian-kohler.path-intellisense"
+    "MariusvanWijk-JoppeKoers.codam-norminette-3"
+)
+
+# 各拡張機能をインストール
+for extension in "${extensions[@]}"; do
+    if code --list-extensions | grep -q "^$extension$"; then
+        print_success "$extension は既にインストールされています"
+    else
+        print_info "$extension をインストール中..."
+        code --install-extension "$extension"
+        print_success "$extension のインストール完了"
+    fi
+done
 
 print_success "VSCode関連のセットアップ完了"
 
@@ -162,6 +184,15 @@ else
     print_info "Spotifyをインストール中..."
     sudo snap install spotify
     print_success "Spotifyのインストール完了"
+fi
+
+# Bitwardenのインストール
+if snap list bitwarden &> /dev/null; then
+    print_success "Bitwardenは既にインストールされています"
+else
+    print_info "Bitwardenをインストール中..."
+    sudo snap install bitwarden
+    print_success "Bitwardenのインストール完了"
 fi
 
 # Discordのインストール
