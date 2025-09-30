@@ -24,6 +24,11 @@ print_warning() {
 
 print_info "設定ファイルの適用を開始します..."
 
+print_info "システムパッケージを更新中..."
+sudo apt update && sudo apt upgrade -y
+sudo apt autoremove -y
+print_success "システムアップデートが完了しました"
+
 # Mozc設定ファイルの作成
 print_info "Mozc設定ファイルを作成中..."
 mkdir -p ~/.config/mozc
