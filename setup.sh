@@ -164,6 +164,34 @@ else
     print_success "Spotifyのインストール完了"
 fi
 
+# Discordのインストール
+if command -v discord &> /dev/null; then
+    print_success "Discordは既にインストールされています"
+else
+    print_info "Discordをインストール中..."
+    DISCORD_DEB="discord-latest.deb"
+    wget -O "$DISCORD_DEB" "https://discord.com/api/download?platform=linux"
+    sudo dpkg -i "$DISCORD_DEB"
+    sudo apt-get install -f -y  # 依存関係の修正
+    rm -f "$DISCORD_DEB"
+    print_success "Discordのインストール完了"
+fi
+
+# fastfetchのインストール
+if command -v fastfetch &> /dev/null; then
+    print_success "fastfetchは既にインストールされています"
+else
+    print_info "fastfetchをインストール中..."
+    FASTFETCH_DEB="fastfetch-latest.deb"
+    # アーキテクチャを取得（amd64, arm64等）
+    ARCH=$(dpkg --print-architecture)
+    wget -O "$FASTFETCH_DEB" "https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-${ARCH}.deb"
+    sudo dpkg -i "$FASTFETCH_DEB"
+    sudo apt-get install -f -y  # 依存関係の修正
+    rm -f "$FASTFETCH_DEB"
+    print_success "fastfetchのインストール完了"
+fi
+
 # 日本語入力システム（Mozc）のインストール
 if dpkg -l | grep -q ibus-mozc; then
     print_success "ibus-mozcは既にインストールされています"
