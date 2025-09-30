@@ -40,13 +40,16 @@ sudo apt install -y \
     ffmpeg \
     copyq \
     python3 \
-    python3-pip
+    python3-pip \
+    python3-setuptools \
+    pipx
 
 print_success "基本ツールのインストール完了"
 
 # Python関連
 print_info "Python関連ツールをインストール中..."
-python3 -m pip install -U norminette
+pipx install norminette
+pipx ensurepath
 
 # Microsoft公式リポジトリの追加とVSCodeインストール
 print_info "VSCodeをインストール中..."
