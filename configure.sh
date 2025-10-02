@@ -204,11 +204,6 @@ cat > "$vscode_settings_file" <<'EOF'
 	"workbench.externalBrowser": "firefox",
 	"git.confirmSync": false,
 	"files.autoSave": "afterDelay",
-	"42header.username": "yunagaha",
-	"42header.email": "yunagaha@student.42.fr",
-	"cSpell.userWords": [
-		"yunagaha"
-	],
 	"editor.detectIndentation": false,
 	"editor.autoIndentOnPaste": true,
 	"files.trimTrailingWhitespace": true,
