@@ -1,21 +1,21 @@
-# Ubuntu自動セットアップ
+# Ubuntu Automatic Setup
 
-Ubuntu開発環境の自動インストール・設定スクリプト
+Automated installation and configuration script for Ubuntu development environment
 
-## 動作確認環境
+## Tested Environment
 
 Ubuntu 24.04.3 LTS x86_64
 
-## 📦 インストール内容
+## 📦 Installation Contents
 
-### 開発ツール
-- **基本**: git, curl, wget, gnupg, gpg, software-properties-common, build-essential, gdb, valgrind, ffmpeg
+### Development Tools
+- **Basic**: git, curl, wget, gnupg, gpg, software-properties-common, build-essential, gdb, valgrind, ffmpeg
 - **Python**: python3, python3-pip, python3-setuptools, pipx, norminette
-- **Node.js**: nvm + 最新LTS版
-- **エディタ**: VSCode + C/C++拡張機能
-- **シェル**: Zsh + エイリアス設定
+- **Node.js**: nvm + latest LTS version
+- **Editor**: VSCode + C/C++ extensions
+- **Shell**: Zsh + alias configuration
 
-### VSCode拡張機能
+### VSCode Extensions
 - C/C++ Tools (ms-vscode.cpptools)
 - C/C++ Extension Pack (ms-vscode.cpptools-extension-pack)
 - 42 Header (kube.42header)
@@ -26,93 +26,101 @@ Ubuntu 24.04.3 LTS x86_64
 - Path Intellisense (christian-kohler.path-intellisense)
 - PDF (tomoki1207.pdf)
 
-### アプリケーション
-- **ブラウザ**: Brave Browser
-- **メディア**: VLC, OBS Studio, Spotify (snap)
-- **ドキュメント**: Typora, Obsidian
-- **コミュニケーション**: Discord
-- **ユーティリティ**: CopyQ, fastfetch, Bitwarden (snap)
-- **日本語入力**: ibus-mozc
+### Applications
+- **Browser**: Brave Browser
+- **Media**: VLC, OBS Studio, Spotify (snap)
+- **Documents**: Typora, Obsidian
+- **Communication**: Discord
+- **Utilities**: CopyQ, fastfetch, Bitwarden (snap)
+- **Japanese Input**: ibus-mozc
 
-## 🚀 使用方法
+## 🚀 Usage
 
 ```bash
-# クローンして実行
+# Clone and execute
 git clone https://github.com/sudolifeagain/ubuntu-setup.git
 cd ubuntu-setup
 chmod +x *.sh
 
-# 1. アプリインストール
+# 1. Install applications
 ./setup.sh
 
-# 2. 設定適用
+# 2. Apply configurations
 ./configure.sh
 ```
 
-## 🔧 自動設定内容
+## 🔧 Automatic Configuration Contents
 
-### システム設定
-- **ラップトップ蓋閉じ時の動作**: 外部電源接続時・ドッキング時はサスペンドしない
-- **システムアップデート**: パッケージの更新と不要パッケージの削除
+### System Settings
+- **Laptop lid close behavior**: No suspend when external power connected or docked
+- **System updates**: Package updates and removal of unnecessary packages
 
-### 開発環境設定
-- **Git設定**: ユーザー名・メールアドレスの設定（対話式）
-- **SSH鍵**: ED25519鍵の生成と公開鍵の表示
-- **Zshエイリアス**:
+### Development Environment Settings
+- **Git configuration**: Username and email address setup (interactive)
+- **SSH keys**: ED25519 key generation and public key display
+- **VSCode settings**: Automatic configuration of user settings for 42 development
+- **Zsh aliases**:
   - `gs` → `git status`
   - `ll` → `ls -la`
   - `c` → `clear`
   - `cc` → `cc -Wall -Wextra -Werror`
   - `norm` → `norminette -R CheckForbiddenSourceHeader`
-- **デフォルトシェル**: Zshへの変更（対話式）
+- **Default shell**: Change to Zsh (interactive)
 
-### 日本語入力設定
-- **Mozc設定**: ROMAN入力モード、デフォルト入力モードをひらがなに設定
+### Japanese Input Settings
+- **Mozc configuration**: ROMAN input mode, default input mode set to hiragana
 
-## 🔧 手動設定
+### VSCode Settings
+- **42 Header configuration**: Username and email for yunagaha@student.42.fr
+- **Editor preferences**: Tabs over spaces, auto-save, trailing whitespace handling
+- **Git integration**: Disabled sync confirmation
+- **Security settings**: Trust untrusted files automatically
+- **Code spell checker**: Custom user dictionary with "yunagaha"
+- **GitHub Copilot**: Disabled next edit suggestions
 
-実行後に以下を設定してください：
+## 🔧 Manual Configuration
 
-1. **日本語入力**: 設定 → 地域と言語 → 入力ソース → 日本語(Mozc)
-2. **SSH鍵**: 表示される公開鍵をGitHub/GitLabに登録
-3. **再起動**: 全ての設定を適用（configure.shで選択可能）
+Please configure the following after execution:
 
-## 📁 ファイル構成
+1. **Japanese input**: Settings → Region & Language → Input Sources → Japanese (Mozc)
+2. **SSH keys**: Register displayed public key to GitHub/GitLab
+3. **Restart**: Apply all settings (selectable in configure.sh)
 
-- [`setup.sh`](setup.sh): アプリケーションとツールのインストール
-- [`configure.sh`](configure.sh): 各種設定の適用と初期化
-- [`README.md`](README.md): このドキュメント
+## 📁 File Structure
 
-## 🛠️ 技術仕様
+- [`setup.sh`](setup.sh): Application and tool installation
+- [`configure.sh`](configure.sh): Configuration application and initialization
+- [`README.md`](README.md): This document
 
-### パッケージ管理
-- **APT**: 基本パッケージとリポジトリ追加
+## 🛠️ Technical Specifications
+
+### Package Management
+- **APT**: Basic packages and repository additions
 - **Snap**: Spotify, Bitwarden
-- **直接ダウンロード**: Obsidian, Discord, fastfetch
+- **Direct download**: Obsidian, Discord, fastfetch
 - **PPA**: OBS Studio
-- **公式リポジトリ**: VSCode, Brave Browser, Typora
+- **Official repositories**: VSCode, Brave Browser, Typora
 
-### インストール検証
-- 既存インストールの確認機能
-- 重複インストールの回避
-- エラーハンドリングと依存関係の自動修正
+### Installation Verification
+- Existing installation check functionality
+- Duplicate installation avoidance
+- Error handling and automatic dependency fixes
 
-## 注意事項
+## Notes
 
-- sudo権限が必要
-- 既存設定は自動でバックアップ
-- インターネット接続が必要
-- 設定の完全適用には再起動が必要
-- 対話式入力が含まれるため、無人実行不可
+- sudo privileges required
+- Existing settings automatically backed up
+- Internet connection required
+- System restart required for complete setting application
+- Cannot run unattended due to interactive input
 
-## トラブルシューティング
+## Troubleshooting
 
-### よくある問題
-1. **権限エラー**: `sudo chmod +x *.sh` で実行権限を付与
-2. **ネットワークエラー**: インターネット接続を確認
-3. **依存関係エラー**: `sudo apt update && sudo apt install -f` で修復
-4. **SSH鍵が見つからない**: configure.shを再実行して鍵を生成
+### Common Issues
+1. **Permission errors**: Grant execution permissions with `sudo chmod +x *.sh`
+2. **Network errors**: Check internet connection
+3. **Dependency errors**: Fix with `sudo apt update && sudo apt install -f`
+4. **SSH key not found**: Re-run configure.sh to generate keys
 
-### ログ確認
-エラーが発生した場合は、エラーメッセージを確認して該当パッケージを手動でインストールしてください。
-
+### Log Checking
+If errors occur, check error messages and manually install the relevant packages.

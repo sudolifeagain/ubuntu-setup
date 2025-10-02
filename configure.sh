@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Ubuntu設定ファイル適用スクリプト
-# このスクリプトは各種設定ファイルを適用します
+# Ubuntu Configuration File Application Script
+# This script applies various configuration files
 
-set -e  # エラーが発生したら停止
+set -e  # Stop on error
 
-# 色付きメッセージ用の関数
+# Functions for colored messages
 print_info() {
     echo -e "\033[36m[INFO]\033[0m $1"
 }
@@ -22,36 +22,36 @@ print_warning() {
     echo -e "\033[33m[WARNING]\033[0m $1"
 }
 
-print_info "設定ファイルの適用を開始します..."
+print_info "Starting configuration file application..."
 
-print_info "システムパッケージを更新中..."
+print_info "Updating system packages..."
 sudo apt update && sudo apt upgrade -y
 sudo apt autoremove -y
-print_success "システムアップデートが完了しました"
+print_success "System update completed"
 
-# ラップトップ蓋閉じ時の動作設定
-print_info "ラップトップ蓋閉じ時の動作設定を適用中..."
+# Configure laptop lid close behavior
+print_info "Applying laptop lid close behavior configuration..."
 logind_conf="/etc/systemd/logind.conf"
 
-# バックアップを作成
+# Create backup
 if [ ! -f "${logind_conf}.backup" ]; then
     sudo cp "$logind_conf" "${logind_conf}.backup"
-    print_info "logind.confのバックアップを作成しました"
+    print_info "Created backup of logind.conf"
 fi
 
-# 設定を変更
+# Apply configuration
 sudo sed -i 's/^#HandleLidSwitchExternalPower=suspend/HandleLidSwitchExternalPower=ignore/' "$logind_conf"
 sudo sed -i 's/^#HandleLidSwitchDocked=ignore/HandleLidSwitchDocked=ignore/' "$logind_conf"
 
-# 設定が正しく適用されたか確認
+# Verify configuration was applied correctly
 if grep -q "^HandleLidSwitchExternalPower=ignore" "$logind_conf" && grep -q "^HandleLidSwitchDocked=ignore" "$logind_conf"; then
-    print_success "蓋閉じ時の動作設定が適用されました"
+    print_success "Lid close behavior configuration applied"
 else
-    print_warning "設定の適用に失敗した可能性があります。手動で確認してください。"
+    print_warning "Configuration application may have failed. Please check manually."
 fi
 
-# Mozc設定ファイルの作成
-print_info "Mozc設定ファイルを作成中..."
+# Create Mozc configuration file
+print_info "Creating Mozc configuration file..."
 mkdir -p ~/.config/mozc
 cat > ~/.config/mozc/config1.db <<EOF
 [General]
@@ -60,17 +60,17 @@ session_keymap=default
 default_input_mode=HIRAGANA
 EOF
 
-print_success "Mozc設定ファイルが作成されました"
+print_success "Mozc configuration file created"
 
-# Zsh設定の適用
-print_info "Zsh設定を適用中..."
+# Apply Zsh configuration
+print_info "Applying Zsh configuration..."
 
-# .zshrcにエイリアスを追加（既存の設定を保持）
+# Add aliases to .zshrc (preserve existing configuration)
 if [ ! -f ~/.zshrc ]; then
     touch ~/.zshrc
 fi
 
-# 重複を避けるために、既存のエイリアスをチェック
+# Check for existing aliases to avoid duplicates
 if ! grep -q "alias gs=" ~/.zshrc; then
     echo 'alias gs="git status"' >> ~/.zshrc
 fi
@@ -91,108 +91,148 @@ if ! grep -q "alias norm=" ~/.zshrc; then
     echo 'alias norm="norminette -R CheckForbiddenSourceHeader"' >> ~/.zshrc
 fi
 
-print_success "Zshエイリアスが設定されました"
+print_success "Zsh aliases configured"
 
-# デフォルトシェルの変更確認
+# Check default shell change
 current_shell=$(echo $SHELL)
 zsh_path=$(which zsh)
 
 if [ "$current_shell" != "$zsh_path" ]; then
-    print_warning "現在のデフォルトシェル: $current_shell"
-    print_info "デフォルトシェルをZshに変更しますか？ (y/n)"
+    print_warning "Current default shell: $current_shell"
+    print_info "Change default shell to Zsh? (y/n)"
     read -r response
     if [[ "$response" =~ ^[Yy]$ ]]; then
         chsh -s "$zsh_path"
-        print_success "デフォルトシェルがZshに変更されました"
-        print_info "変更を適用するには再ログインが必要です"
+        print_success "Default shell changed to Zsh"
+        print_info "Re-login required to apply changes"
     else
-        print_info "デフォルトシェルの変更をスキップしました"
-        print_info "手動で変更する場合: chsh -s \$(which zsh)"
+        print_info "Skipped default shell change"
+        print_info "To change manually: chsh -s \$(which zsh)"
     fi
 else
-    print_success "デフォルトシェルは既にZshに設定されています"
+    print_success "Default shell is already set to Zsh"
 fi
 
-# Git設定の確認
-print_info "Git設定を確認中..."
+# Check Git configuration
+print_info "Checking Git configuration..."
 git_user_name=$(git config --global user.name 2>/dev/null || echo "")
 git_user_email=$(git config --global user.email 2>/dev/null || echo "")
 
 if [ -z "$git_user_name" ] || [ -z "$git_user_email" ]; then
-    print_warning "Git設定が未完了です"
-    
+    print_warning "Git configuration incomplete"
+
     if [ -z "$git_user_name" ]; then
-        print_info "Gitユーザー名を入力してください:"
+        print_info "Enter Git username:"
         read -r git_name
         git config --global user.name "$git_name"
     fi
-    
+
     if [ -z "$git_user_email" ]; then
-        print_info "Gitメールアドレスを入力してください:"
+        print_info "Enter Git email address:"
         read -r git_email
         git config --global user.email "$git_email"
     fi
-    
-    print_success "Git設定が完了しました"
+
+    print_success "Git configuration completed"
 else
-    print_success "Git設定済み: $git_user_name <$git_user_email>"
+    print_success "Git already configured: $git_user_name <$git_user_email>"
 fi
 
-# SSH鍵生成とpubkey表示
-print_info "SSH鍵の設定を確認中..."
+# SSH key generation and public key display
+print_info "Checking SSH key configuration..."
 ssh_key_path="$HOME/.ssh/id_ed25519"
 
 if [ ! -f "$ssh_key_path" ]; then
-    print_warning "SSH鍵が見つかりません"
-    print_info "SSH鍵を生成しますか？ (y/n)"
+    print_warning "SSH key not found"
+    print_info "Generate SSH key? (y/n)"
     read -r ssh_response
-    
+
     if [[ "$ssh_response" =~ ^[Yy]$ ]]; then
-        print_info "SSH鍵を生成中（ED25519アルゴリズム使用）..."
-        
-        # メールアドレスがある場合はそれを使用、なければユーザー名@ホスト名
+        print_info "Generating SSH key (using ED25519 algorithm)..."
+
+        # Use email address if available, otherwise use username@hostname
         if [ -n "$git_user_email" ]; then
             ssh_email="$git_user_email"
         else
             ssh_email="$(whoami)@$(hostname)"
         fi
-        
+
         ssh-keygen -t ed25519 -C "$ssh_email" -f "$ssh_key_path" -N ""
-        
-        # SSH エージェントに鍵を追加
+
+        # Add key to SSH agent
         eval "$(ssh-agent -s)"
         ssh-add "$ssh_key_path"
-        
-        print_success "SSH鍵（ED25519）が生成されました"
+
+        print_success "SSH key (ED25519) generated"
     else
-        print_info "SSH鍵の生成をスキップしました"
+        print_info "Skipped SSH key generation"
     fi
 else
-    print_success "SSH鍵は既に存在します"
+    print_success "SSH key already exists"
 fi
 
-# SSH公開鍵の表示
+# Display SSH public key
 if [ -f "${ssh_key_path}.pub" ]; then
-    print_info "SSH公開鍵の内容:"
+    print_info "SSH public key content:"
     echo "----------------------------------------"
     cat "${ssh_key_path}.pub"
     echo "----------------------------------------"
-    print_info "この公開鍵をGitHub/GitLabなどのサービスに登録してください"
-    print_info "公開鍵は以下のコマンドでいつでも確認できます:"
+    print_info "Register this public key to GitHub/GitLab and other services"
+    print_info "You can always check the public key with this command:"
     echo "  cat ~/.ssh/id_ed25519.pub"
 fi
 
-print_success "🎉 設定ファイルの適用が完了しました！"
-print_info "蓋閉じ時の動作設定を含め、全ての変更を完全に適用するには再起動が必要です"
+# Configure VSCode settings
+print_info "Applying VSCode user settings..."
+vscode_settings_dir="$HOME/.config/Code/User"
+vscode_settings_file="$vscode_settings_dir/settings.json"
 
-# ユーザーに再起動の確認
-print_info "今すぐシステムを再起動しますか？ (y/n)"
+# Create VSCode User directory if it doesn't exist
+mkdir -p "$vscode_settings_dir"
+
+# Create or update settings.json
+if [ -f "$vscode_settings_file" ]; then
+    # Backup existing settings
+    cp "$vscode_settings_file" "${vscode_settings_file}.backup.$(date +%Y%m%d_%H%M%S)"
+    print_info "Backed up existing VSCode settings"
+fi
+
+# Create new settings.json with desired configuration
+cat > "$vscode_settings_file" <<'EOF'
+{
+	"github.copilot.nextEditSuggestions.enabled": false,
+	"workbench.externalBrowser": "firefox",
+	"git.confirmSync": false,
+	"files.autoSave": "afterDelay",
+	"42header.username": "yunagaha",
+	"42header.email": "yunagaha@student.42.fr",
+	"cSpell.userWords": [
+		"yunagaha"
+	],
+	"editor.detectIndentation": false,
+	"editor.autoIndentOnPaste": true,
+	"files.trimTrailingWhitespace": true,
+	"editor.insertSpaces": false,
+	"files.insertFinalNewline": true,
+	"files.trimFinalNewlines": true,
+	"editor.comments.insertSpace": false,
+	"security.workspace.trust.untrustedFiles": "open"
+}
+EOF
+
+print_success "VSCode user settings configured"
+
+print_success "🎉 Configuration file application completed!"
+print_info "System restart is required to fully apply all changes including lid close behavior settings"
+
+# Ask user for restart confirmation
+print_info "Restart system now? (y/n)"
 read -r reboot_response
 
 if [[ "$reboot_response" =~ ^[Yy]$ ]]; then
-    print_info "システムを再起動中..."
+    print_info "Restarting system..."
     sudo reboot
 else
-    print_warning "再起動をスキップしました"
-    print_info "設定を完全に適用するには、後で手動で再起動してください: sudo reboot"
+    print_warning "Restart skipped"
+    print_info "To fully apply settings, manually restart later: sudo reboot"
 fi

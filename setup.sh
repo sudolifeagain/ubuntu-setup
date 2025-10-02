@@ -1,11 +1,11 @@
 #!/bin/bash
 
-# Ubuntu自動セットアップスクリプト
-# このスクリプトは開発環境とアプリケーションを一括でインストールします
+# Ubuntu Automatic Setup Script
+# This script installs development environment and applications in batch
 
-set -e  # エラーが発生したら停止
+set -e  # Stop on error
 
-# 色付きメッセージ用の関数
+# Functions for colored messages
 print_info() {
     echo -e "\033[36m[INFO]\033[0m $1"
 }
@@ -18,16 +18,16 @@ print_error() {
     echo -e "\033[31m[ERROR]\033[0m $1"
 }
 
-print_info "Ubuntu自動セットアップを開始します..."
+print_info "Starting Ubuntu automatic setup..."
 
-# システムアップデート
-print_info "システムパッケージを更新中..."
+# System update
+print_info "Updating system packages..."
 sudo apt update && sudo apt upgrade -y
 
-# 基本ツールのインストール
-print_info "基本ツールをインストール中..."
+# Install basic tools
+print_info "Installing basic tools..."
 
-# 個別に重要なツールをチェック
+# Check important tools individually
 tools_to_check=("git" "zsh" "ffmpeg" "copyq")
 missing_tools=()
 
@@ -35,12 +35,12 @@ for tool in "${tools_to_check[@]}"; do
     if ! command -v "$tool" &> /dev/null; then
         missing_tools+=("$tool")
     else
-        print_success "$tool は既にインストールされています"
+        print_success "$tool is already installed"
     fi
 done
 
 if [ ${#missing_tools[@]} -gt 0 ]; then
-    print_info "不足している基本ツールをインストール中..."
+    print_info "Installing missing basic tools..."
     sudo apt install -y \
         curl \
         wget \
@@ -58,61 +58,61 @@ if [ ${#missing_tools[@]} -gt 0 ]; then
         python3-pip \
         python3-setuptools \
         pipx
-    print_success "基本ツールのインストール完了"
+    print_success "Basic tools installation completed"
 else
-    print_success "基本ツールは全てインストール済みです"
+    print_success "All basic tools are already installed"
 fi
 
-# Python関連
+# Python related
 if command -v norminette &> /dev/null; then
-    print_success "norminetteは既にインストールされています"
+    print_success "norminette is already installed"
 else
-    print_info "Python関連ツールをインストール中..."
+    print_info "Installing Python related tools..."
     pipx install norminette
     pipx ensurepath
-    print_success "norminetteのインストール完了"
+    print_success "norminette installation completed"
 fi
 
-# Node.js（nvm経由）のインストール
+# Node.js installation (via nvm)
 if command -v node &> /dev/null; then
-    print_success "Node.jsは既にインストールされています ($(node -v))"
+    print_success "Node.js is already installed ($(node -v))"
 else
-    print_info "Node.js（nvm経由）をインストール中..."
-    # nvmをダウンロードしてインストール
+    print_info "Installing Node.js (via nvm)..."
+    # Download and install nvm
     curl -o- https://raw.githubusercontent.com/nvm-sh/nvm/v0.40.3/install.sh | bash
-    
-    # nvmをロード
+
+    # Load nvm
     export NVM_DIR="$HOME/.nvm"
     [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
     [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"
-    
-    # 最新のLTSバージョンをインストール
+
+    # Install latest LTS version
     nvm install --lts
     nvm use --lts
     nvm alias default lts/*
-    
-    print_success "Node.jsのインストール完了 ($(node -v))"
-    print_success "npmのインストール完了 ($(npm -v))"
+
+    print_success "Node.js installation completed ($(node -v))"
+    print_success "npm installation completed ($(npm -v))"
 fi
 
-# Microsoft公式リポジトリの追加とVSCodeインストール
+# Add Microsoft official repository and install VSCode
 if command -v code &> /dev/null; then
-    print_success "VSCodeは既にインストールされています"
+    print_success "VSCode is already installed"
 else
-    print_info "VSCodeをインストール中..."
+    print_info "Installing VSCode..."
     wget -qO- https://packages.microsoft.com/keys/microsoft.asc | gpg --dearmor > microsoft.gpg
     sudo install -o root -g root -m 644 microsoft.gpg /etc/apt/trusted.gpg.d/
     sudo sh -c 'echo "deb [arch=amd64] https://packages.microsoft.com/repos/code stable main" > /etc/apt/sources.list.d/vscode.list'
     sudo apt update
     sudo apt install -y code
     rm -f microsoft.gpg
-    print_success "VSCodeのインストール完了"
+    print_success "VSCode installation completed"
 fi
 
-# VSCode拡張機能のインストール
-print_info "VSCode拡張機能をインストール中..."
+# Install VSCode extensions
+print_info "Installing VSCode extensions..."
 
-# 拡張機能のリスト
+# List of extensions
 extensions=(
     "ms-vscode.cpptools"
     "DoKca.42-ft-count-line"
@@ -125,134 +125,134 @@ extensions=(
     "tomoki1207.pdf"
 )
 
-# 各拡張機能をインストール
+# Install each extension
 for extension in "${extensions[@]}"; do
     if code --list-extensions | grep -q "^$extension$"; then
-        print_success "$extension は既にインストールされています"
+        print_success "$extension is already installed"
     else
-        print_info "$extension をインストール中..."
+        print_info "Installing $extension..."
         code --install-extension "$extension"
-        print_success "$extension のインストール完了"
+        print_success "$extension installation completed"
     fi
 done
 
-print_success "VSCode関連のセットアップ完了"
+print_success "VSCode related setup completed"
 
-# Braveブラウザのインストール
+# Install Brave browser
 if command -v brave-browser &> /dev/null; then
-    print_success "Braveブラウザは既にインストールされています"
+    print_success "Brave browser is already installed"
 else
-    print_info "Braveブラウザをインストール中..."
+    print_info "Installing Brave browser..."
     sudo curl -fsSLo /usr/share/keyrings/brave-browser-archive-keyring.gpg https://brave-browser-apt-release.s3.brave.com/brave-browser-archive-keyring.gpg
     echo "deb [signed-by=/usr/share/keyrings/brave-browser-archive-keyring.gpg] https://brave-browser-apt-release.s3.brave.com/ stable main" | sudo tee /etc/apt/sources.list.d/brave-browser-release.list
     sudo apt update
     sudo apt install -y brave-browser
-    print_success "Braveブラウザのインストール完了"
+    print_success "Brave browser installation completed"
 fi
 
-# メディア関連アプリケーション
-print_info "メディア関連アプリケーションをインストール中..."
+# Media related applications
+print_info "Installing media related applications..."
 
-# VLCのインストール
+# Install VLC
 if command -v vlc &> /dev/null; then
-    print_success "VLCは既にインストールされています"
+    print_success "VLC is already installed"
 else
-    print_info "VLCをインストール中..."
+    print_info "Installing VLC..."
     sudo apt install -y vlc
-    print_success "VLCのインストール完了"
+    print_success "VLC installation completed"
 fi
 
-# OBS Studio（公式PPA使用）
+# OBS Studio (using official PPA)
 if command -v obs &> /dev/null; then
-    print_success "OBS Studioは既にインストールされています"
+    print_success "OBS Studio is already installed"
 else
-    print_info "OBS Studioをインストール中..."
+    print_info "Installing OBS Studio..."
     sudo add-apt-repository -y ppa:obsproject/obs-studio
     sudo apt update
     sudo apt install -y obs-studio
-    print_success "OBS Studioのインストール完了"
+    print_success "OBS Studio installation completed"
 fi
 
-print_success "メディア関連アプリケーションのインストール完了"
+print_success "Media related applications installation completed"
 
-# Typoraのインストール
+# Install Typora
 if command -v typora &> /dev/null; then
-    print_success "Typoraは既にインストールされています"
+    print_success "Typora is already installed"
 else
-    print_info "Typoraをインストール中..."
+    print_info "Installing Typora..."
     wget -qO - https://typora.io/linux/public-key.asc | sudo gpg --dearmor -o /usr/share/keyrings/typora.gpg
     echo "deb [signed-by=/usr/share/keyrings/typora.gpg] https://typora.io/linux ./" | sudo tee /etc/apt/sources.list.d/typora.list
     sudo apt update
     sudo apt install -y typora
-    print_success "Typoraのインストール完了"
+    print_success "Typora installation completed"
 fi
 
-# Obsidianのインストール
+# Install Obsidian
 if command -v obsidian &> /dev/null; then
-    print_success "Obsidianは既にインストールされています"
+    print_success "Obsidian is already installed"
 else
-    print_info "Obsidianをインストール中..."
+    print_info "Installing Obsidian..."
     OBSIDIAN_DEB="obsidian_latest_amd64.deb"
     wget -O "$OBSIDIAN_DEB" "https://github.com/obsidianmd/obsidian-releases/releases/download/v1.9.12/obsidian_1.9.12_amd64.deb"
     sudo dpkg -i "$OBSIDIAN_DEB"
-    sudo apt-get install -f -y  # 依存関係の修正
+    sudo apt-get install -f -y  # Fix dependencies
     rm -f "$OBSIDIAN_DEB"
-    print_success "Obsidianのインストール完了"
+    print_success "Obsidian installation completed"
 fi
 
-# Spotifyのインストール
+# Install Spotify
 if snap list spotify &> /dev/null; then
-    print_success "Spotifyは既にインストールされています"
+    print_success "Spotify is already installed"
 else
-    print_info "Spotifyをインストール中..."
+    print_info "Installing Spotify..."
     sudo snap install spotify
-    print_success "Spotifyのインストール完了"
+    print_success "Spotify installation completed"
 fi
 
-# Bitwardenのインストール
+# Install Bitwarden
 if snap list bitwarden &> /dev/null; then
-    print_success "Bitwardenは既にインストールされています"
+    print_success "Bitwarden is already installed"
 else
-    print_info "Bitwardenをインストール中..."
+    print_info "Installing Bitwarden..."
     sudo snap install bitwarden
-    print_success "Bitwardenのインストール完了"
+    print_success "Bitwarden installation completed"
 fi
 
-# Discordのインストール
+# Install Discord
 if command -v discord &> /dev/null; then
-    print_success "Discordは既にインストールされています"
+    print_success "Discord is already installed"
 else
-    print_info "Discordをインストール中..."
+    print_info "Installing Discord..."
     DISCORD_DEB="discord-latest.deb"
     wget -O "$DISCORD_DEB" "https://discord.com/api/download?platform=linux"
     sudo dpkg -i "$DISCORD_DEB"
-    sudo apt-get install -f -y  # 依存関係の修正
+    sudo apt-get install -f -y  # Fix dependencies
     rm -f "$DISCORD_DEB"
-    print_success "Discordのインストール完了"
+    print_success "Discord installation completed"
 fi
 
-# fastfetchのインストール
+# Install fastfetch
 if command -v fastfetch &> /dev/null; then
-    print_success "fastfetchは既にインストールされています"
+    print_success "fastfetch is already installed"
 else
-    print_info "fastfetchをインストール中..."
+    print_info "Installing fastfetch..."
     FASTFETCH_DEB="fastfetch-latest.deb"
-    # アーキテクチャを取得（amd64, arm64等）
+    # Get architecture (amd64, arm64, etc.)
     ARCH=$(dpkg --print-architecture)
     wget -O "$FASTFETCH_DEB" "https://github.com/fastfetch-cli/fastfetch/releases/latest/download/fastfetch-linux-${ARCH}.deb"
     sudo dpkg -i "$FASTFETCH_DEB"
-    sudo apt-get install -f -y  # 依存関係の修正
+    sudo apt-get install -f -y  # Fix dependencies
     rm -f "$FASTFETCH_DEB"
-    print_success "fastfetchのインストール完了"
+    print_success "fastfetch installation completed"
 fi
 
-# 日本語入力システム（Mozc）のインストール
+# Install Japanese input system (Mozc)
 if dpkg -l | grep -q ibus-mozc; then
-    print_success "ibus-mozcは既にインストールされています"
+    print_success "ibus-mozc is already installed"
 else
-    print_info "日本語入力システム（Mozc）をインストール中..."
+    print_info "Installing Japanese input system (Mozc)..."
     sudo apt install -y ibus-mozc
-    print_success "ibus-mozcのインストール完了"
+    print_success "ibus-mozc installation completed"
 fi
 
-print_success "🎉 Ubuntu自動セットアップが完了しました！"
+print_success "🎉 Ubuntu automatic setup completed!"
