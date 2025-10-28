@@ -65,33 +65,25 @@ print_success "Mozc configuration file created"
 # Apply Zsh configuration
 print_info "Applying Zsh configuration..."
 
-# Add aliases to .zshrc (preserve existing configuration)
-if [ ! -f ~/.zshrc ]; then
-    touch ~/.zshrc
+# Get the directory where this script is located
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
+ZSHRC_TEMPLATE="$SCRIPT_DIR/.zshrc.template"
+
+# Check if template file exists
+if [ ! -f "$ZSHRC_TEMPLATE" ]; then
+    print_error "Zsh configuration template not found: $ZSHRC_TEMPLATE"
+    exit 1
 fi
 
-# Check for existing aliases to avoid duplicates
-if ! grep -q "alias gs=" ~/.zshrc; then
-    echo 'alias gs="git status"' >> ~/.zshrc
+# Backup existing .zshrc if it exists
+if [ -f ~/.zshrc ]; then
+    cp ~/.zshrc ~/.zshrc.backup.$(date +%Y%m%d_%H%M%S)
+    print_info "Backed up existing .zshrc"
 fi
 
-if ! grep -q "alias ll=" ~/.zshrc; then
-    echo 'alias ll="ls -la"' >> ~/.zshrc
-fi
-
-if ! grep -q "alias c=" ~/.zshrc; then
-    echo 'alias c="clear"' >> ~/.zshrc
-fi
-
-if ! grep -q "alias cc=" ~/.zshrc; then
-    echo 'alias cc="cc -Wall -Wextra -Werror"' >> ~/.zshrc
-fi
-
-if ! grep -q "alias norm=" ~/.zshrc; then
-    echo 'alias norm="norminette -R CheckForbiddenSourceHeader"' >> ~/.zshrc
-fi
-
-print_success "Zsh aliases configured"
+# Copy template to user's home directory
+cp "$ZSHRC_TEMPLATE" ~/.zshrc
+print_success "Zsh configuration applied from template"
 
 # Check default shell change
 current_shell=$(echo $SHELL)
@@ -200,7 +192,7 @@ fi
 # Create new settings.json with desired configuration
 cat > "$vscode_settings_file" <<'EOF'
 {
-	"github.copilot.nextEditSuggestions.enabled": false,
+	"github.copilot.enabled": false,
 	"workbench.externalBrowser": "firefox",
 	"git.confirmSync": false,
 	"files.autoSave": "afterDelay",
@@ -210,8 +202,7 @@ cat > "$vscode_settings_file" <<'EOF'
 	"editor.insertSpaces": false,
 	"files.insertFinalNewline": true,
 	"files.trimFinalNewlines": true,
-	"editor.comments.insertSpace": false,
-	"security.workspace.trust.untrustedFiles": "open"
+	"editor.comments.insertSpace": false
 }
 EOF
 

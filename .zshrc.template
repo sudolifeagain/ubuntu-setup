@@ -1,0 +1,60 @@
+alias gs="git status"
+alias ll="ls -la"
+alias c="clear"
+
+# Created by `pipx` on 2025-09-30 14:40:36
+export PATH="$PATH:/home/re4lity/.local/bin"
+
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
+[ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
+alias ccc="cc -Wall -Wextra -Werror"
+alias norm="norminette -R CheckForbiddenSourceHeader"
+
+# --------------------------------------------------
+# VS Code workspace-specific Copilot enable/disable
+# --------------------------------------------------
+
+# Function to enable Copilot in this workspace
+function copilot-on() {
+  # Check if jq command is available
+  if ! command -v jq &> /dev/null; then
+    echo "Error: 'jq' is required for this feature." >&2
+    echo "Install it with: sudo apt install jq or brew install jq" >&2
+    return 1
+  fi
+
+  # Create .vscode directory if it doesn't exist
+  mkdir -p .vscode
+  local settings_file=".vscode/settings.json"
+
+  # Create new settings.json if it doesn't exist
+  if [ ! -f "$settings_file" ]; then
+    echo '{ "github.copilot.enable": { "*": true } }' > "$settings_file"
+  else
+    # Update existing file safely using jq
+    jq '. + {"github.copilot.enable": {"*": true}}' "$settings_file" > "${settings_file}.tmp" && mv "${settings_file}.tmp" "$settings_file"
+  fi
+
+  echo "✅ GitHub Copilot enabled for this workspace."
+}
+
+# Function to disable Copilot in this workspace
+function copilot-off() {
+  if ! command -v jq &> /dev/null; then
+    echo "Error: 'jq' is required for this feature." >&2
+    echo "Install it with: sudo apt install jq or brew install jq" >&2
+    return 1
+  fi
+
+  mkdir -p .vscode
+  local settings_file=".vscode/settings.json"
+
+  if [ ! -f "$settings_file" ]; then
+    echo '{ "github.copilot.enable": { "*": false } }' > "$settings_file"
+  else
+    jq '. + {"github.copilot.enable": {"*": false}}' "$settings_file" > "${settings_file}.tmp" && mv "${settings_file}.tmp" "$settings_file"
+  fi
+
+  echo "🚫 GitHub Copilot disabled for this workspace."
+}

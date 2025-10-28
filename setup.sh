@@ -57,11 +57,60 @@ if [ ${#missing_tools[@]} -gt 0 ]; then
         python3 \
         python3-pip \
         python3-setuptools \
-        pipx
+        pipx \
+        jq \
+        acpi
     print_success "Basic tools installation completed"
 else
     print_success "All basic tools are already installed"
+    # Ensure jq and acpi are installed
+    if ! command -v jq &> /dev/null || ! command -v acpi &> /dev/null; then
+        print_info "Installing missing utilities (jq, acpi)..."
+        sudo apt install -y jq acpi
+    fi
 fi
+
+# Install specific compiler versions (gcc-11 and clang-12)
+print_info "Installing specific compiler versions (gcc-11, clang-12)..."
+
+# Check if gcc-11 is installed
+if dpkg -l | grep -q "gcc-11 "; then
+    print_success "gcc-11 is already installed"
+else
+    print_info "Installing gcc-11..."
+    sudo apt install -y gcc-11 g++-11
+    print_success "gcc-11 installation completed"
+fi
+
+# Check if clang-12 is installed
+if dpkg -l | grep -q "clang-12 "; then
+    print_success "clang-12 is already installed"
+else
+    print_info "Installing clang-12..."
+    sudo apt install -y clang-12
+    print_success "clang-12 installation completed"
+fi
+
+# Set up compiler alternatives to match 42 environment
+print_info "Configuring compiler alternatives..."
+
+# Configure gcc alternatives
+sudo update-alternatives --install /usr/bin/gcc gcc /usr/bin/gcc-11 110 \
+    --slave /usr/bin/g++ g++ /usr/bin/g++-11 \
+    --slave /usr/bin/gcov gcov /usr/bin/gcov-11
+
+# Configure cc to point to gcc-11
+sudo update-alternatives --install /usr/bin/cc cc /usr/bin/gcc-11 110
+
+# Configure clang alternatives
+sudo update-alternatives --install /usr/bin/clang clang /usr/bin/clang-12 120 \
+    --slave /usr/bin/clang++ clang++ /usr/bin/clang++-12
+
+print_success "Compiler alternatives configured"
+print_info "Compiler versions:"
+echo "  gcc: $(gcc --version | head -n1)"
+echo "  cc: $(cc --version | head -n1)"
+echo "  clang: $(clang --version | head -n1)"
 
 # Python related
 if command -v norminette &> /dev/null; then
@@ -256,3 +305,11 @@ else
 fi
 
 print_success "🎉 Ubuntu automatic setup completed!"
+
+# Display final compiler information
+print_info "=== Installed Compiler Versions ==="
+echo "gcc: $(gcc --version | head -n1)"
+echo "g++: $(g++ --version | head -n1)"
+echo "cc: $(cc --version | head -n1)"
+echo "clang: $(clang --version | head -n1)"
+print_info "===================================="

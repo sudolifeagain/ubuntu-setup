@@ -9,11 +9,17 @@ Ubuntu 24.04.3 LTS x86_64
 ## 📦 Installation Contents
 
 ### Development Tools
-- **Basic**: git, curl, wget, gnupg, gpg, software-properties-common, build-essential, gdb, valgrind, ffmpeg
+- **Basic**: git, curl, wget, gnupg, gpg, software-properties-common, build-essential, gdb, valgrind, ffmpeg, jq, acpi
+- **Compilers**: gcc-11, g++-11, clang-12 (configured to match 42 school environment)
 - **Python**: python3, python3-pip, python3-setuptools, pipx, norminette
 - **Node.js**: nvm + latest LTS version
 - **Editor**: VSCode + C/C++ extensions
-- **Shell**: Zsh + alias configuration
+- **Shell**: Zsh + comprehensive configuration template
+
+### Compiler Configuration (42 School Compatible)
+- **gcc-11**: Version 11.4.0 (default gcc, g++, cc)
+- **clang-12**: Version 12.0.1
+- Configured using update-alternatives for easy switching
 
 ### VSCode Extensions
 - C/C++ Tools (ms-vscode.cpptools)
@@ -56,27 +62,23 @@ chmod +x *.sh
 - **System updates**: Package updates and removal of unnecessary packages
 
 ### Development Environment Settings
+- **Compiler setup**: gcc-11, clang-12 configured as default compilers
 - **Git configuration**: Username and email address setup (interactive)
 - **SSH keys**: ED25519 key generation and public key display
 - **VSCode settings**: Automatic configuration of user settings for 42 development
-- **Zsh aliases**:
-  - `gs` → `git status`
-  - `ll` → `ls -la`
-  - `c` → `clear`
-  - `cc` → `cc -Wall -Wextra -Werror`
-  - `norm` → `norminette -R CheckForbiddenSourceHeader`
+- **Zsh configuration**: Complete shell setup with aliases, NVM, pipx, and Copilot workspace functions
+  - Basic aliases: `gs`, `ll`, `c`, `ccc`, `norm`
+  - NVM integration for Node.js management
+  - Workspace-specific Copilot control functions (`copilot-on`, `copilot-off`)
 - **Default shell**: Change to Zsh (interactive)
 
 ### Japanese Input Settings
 - **Mozc configuration**: ROMAN input mode, default input mode set to hiragana
 
 ### VSCode Settings
-- **42 Header configuration**: Username and email for yunagaha@student.42.fr
 - **Editor preferences**: Tabs over spaces, auto-save, trailing whitespace handling
 - **Git integration**: Disabled sync confirmation
-- **Security settings**: Trust untrusted files automatically
-- **Code spell checker**: Custom user dictionary with "yunagaha"
-- **GitHub Copilot**: Disabled next edit suggestions
+- **GitHub Copilot**: Disabled by default (use workspace functions to enable)
 
 ## 🔧 Manual Configuration
 
@@ -90,16 +92,23 @@ Please configure the following after execution:
 
 - [`setup.sh`](setup.sh): Application and tool installation
 - [`configure.sh`](configure.sh): Configuration application and initialization
+- [`.zshrc.template`](.zshrc.template): Zsh configuration template with aliases and functions
 - [`README.md`](README.md): This document
 
 ## 🛠️ Technical Specifications
 
 ### Package Management
-- **APT**: Basic packages and repository additions
+- **APT**: Basic packages, compilers, and repository additions
 - **Snap**: Spotify, Bitwarden
 - **Direct download**: Obsidian, Discord, fastfetch
 - **PPA**: OBS Studio
 - **Official repositories**: VSCode, Brave Browser, Typora
+
+### Compiler Alternatives System
+Uses `update-alternatives` to manage multiple compiler versions:
+- gcc-11 set as default gcc, g++, and cc
+- clang-12 set as default clang
+- Priority: gcc-11 (110), clang-12 (120)
 
 ### Installation Verification
 - Existing installation check functionality
@@ -121,6 +130,14 @@ Please configure the following after execution:
 2. **Network errors**: Check internet connection
 3. **Dependency errors**: Fix with `sudo apt update && sudo apt install -f`
 4. **SSH key not found**: Re-run configure.sh to generate keys
+5. **Compiler version mismatch**: Run `sudo update-alternatives --config gcc` or `sudo update-alternatives --config clang`
+
+### Verifying Compiler Installation
+```bash
+gcc --version    # Should show gcc 11.4.0
+cc --version     # Should show cc 11.4.0
+clang --version  # Should show clang 12.0.1
+```
 
 ### Log Checking
 If errors occur, check error messages and manually install the relevant packages.
