@@ -192,17 +192,17 @@ fi
 # Create new settings.json with desired configuration
 cat > "$vscode_settings_file" <<'EOF'
 {
-	"github.copilot.enabled": false,
-	"workbench.externalBrowser": "firefox",
-	"git.confirmSync": false,
-	"files.autoSave": "afterDelay",
-	"editor.detectIndentation": false,
-	"editor.autoIndentOnPaste": true,
-	"files.trimTrailingWhitespace": true,
-	"editor.insertSpaces": false,
-	"files.insertFinalNewline": true,
-	"files.trimFinalNewlines": true,
-	"editor.comments.insertSpace": false
+    "github.copilot.enabled": false,
+    "workbench.externalBrowser": "firefox",
+    "git.confirmSync": false,
+    "files.autoSave": "afterDelay",
+    "editor.detectIndentation": false,
+    "editor.autoIndentOnPaste": true,
+    "files.trimTrailingWhitespace": true,
+    "editor.insertSpaces": false,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "editor.comments.insertSpace": false
 }
 EOF
 

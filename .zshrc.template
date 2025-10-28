@@ -1,15 +1,16 @@
 alias gs="git status"
 alias ll="ls -la"
-alias c="clear"
+alias ccc="cc -Wall -Wextra -Werror"
+alias norm="norminette -R CheckForbiddenSourceHeader"
+
 
 # Created by `pipx` on 2025-09-30 14:40:36
-export PATH="$PATH:/home/re4lity/.local/bin"
+export PATH="$PATH:$HOME/.local/bin"
 
 export NVM_DIR="$HOME/.nvm"
 [ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"  # This loads nvm
 [ -s "$NVM_DIR/bash_completion" ] && \. "$NVM_DIR/bash_completion"  # This loads nvm bash_completion
-alias ccc="cc -Wall -Wextra -Werror"
-alias norm="norminette -R CheckForbiddenSourceHeader"
+
 
 # --------------------------------------------------
 # VS Code workspace-specific Copilot enable/disable

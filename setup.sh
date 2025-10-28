@@ -172,6 +172,7 @@ extensions=(
     "christian-kohler.path-intellisense"
     "MariusvanWijk-JoppeKoers.codam-norminette-3"
     "tomoki1207.pdf"
+    "keyhr.42-c-format"
 )
 
 # Install each extension
@@ -186,6 +187,40 @@ for extension in "${extensions[@]}"; do
 done
 
 print_success "VSCode related setup completed"
+print_info "Applying VSCode settings..."
+
+# VSCode settings.jsonの内容を配置
+VSCODE_SETTINGS_DIR="$HOME/.config/Code/User"
+mkdir -p "$VSCOextensionsDE_SETTINGS_DIR"
+cat > "$VSCODE_SETTINGS_DIR/settings.json" <<'EOF'
+{
+    "explorer.confirmDelete": false,
+    "git.suggestSmartCommit": false,
+    "json.schemas": [],
+    "github.copilot.enable": {
+        "*": false
+    },
+    "github.copilot.nextEditSuggestions.enabled": false,
+    "workbench.externalBrowser": "firefox",
+    "git.confirmSync": false,
+    "files.autoSave": "afterDelay",
+    "42header.username": "your-intra-name",
+    "42header.email": "your-intra-name@student.42tokyo.jp",
+    "editor.detectIndentation": false,
+    "editor.autoIndentOnPaste": true,
+    "files.trimTrailingWhitespace": true,
+    "editor.insertSpaces": false,
+    "files.insertFinalNewline": true,
+    "files.trimFinalNewlines": true,
+    "editor.comments.insertSpace": false,
+    "security.workspace.trust.untrustedFiles": "open",
+    "diffEditor.ignoreTrimWhitespace": false,
+    "[c]": {
+        "editor.defaultFormatter": "keyhr.42-c-format"
+    }
+}
+EOF
+print_success "VSCode settings.json applied"
 
 # Install Brave browser
 if command -v brave-browser &> /dev/null; then
